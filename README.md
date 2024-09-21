@@ -18,7 +18,7 @@ A simple YouTube downloader application built using the `yt_dlp` library with a 
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/rohandas28/youtube-downloader.git
+   git clone https://github.com/RohanDas28/YouTube-Downloader.git
    cd youtube-downloader-gui
    ```
 
