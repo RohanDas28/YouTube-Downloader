@@ -29,8 +29,15 @@ def update_gui(video_num, total_videos, completed_videos, download_speed=None):
     remaining_label.config(text=f"Remaining: {total_videos - completed_videos}")
     if download_speed:
         speed_label.config(text=f"Speed: {download_speed:.2f} KB/s")
-    progress_bar['value'] = (completed_videos / total_videos) * 100
+    else:
+        speed_label.config(text="Speed: N/A")
     root.update_idletasks()
+    # Print progress to console with safe formatting
+    if download_speed is not None:
+        speed_str = f"{download_speed:.2f} KB/s"
+    else:
+        speed_str = "N/A"
+    print(f"Video {video_num}/{total_videos} - Downloaded: {completed_videos}, Remaining: {total_videos - completed_videos}, Speed: {speed_str}")
 
 # Function to download a video and update progress and download speed
 def download_video(url, ydl_opts, video_num, total_videos, completed_videos):
@@ -38,7 +45,11 @@ def download_video(url, ydl_opts, video_num, total_videos, completed_videos):
     try:
         def progress_hook(d):
             if d['status'] == 'downloading':
-                download_speed = d.get('speed', 0) / 1024  # Convert to KB/s
+                speed = d.get('speed')
+                if speed is not None:
+                    download_speed = speed / 1024  # Convert to KB/s
+                else:
+                    download_speed = None
                 update_gui(video_num, total_videos, completed_videos[0], download_speed)
         
         ydl_opts['progress_hooks'] = [progress_hook]
@@ -160,10 +171,6 @@ folder_label.pack(pady=5)
 # Progress Label
 progress_label = tk.Label(root, text="Progress: Video 0/0")
 progress_label.pack(pady=5)
-
-# Progress Bar with padding
-progress_bar = ttk.Progressbar(root, length=400, mode='determinate')
-progress_bar.pack(padx=20, pady=10)
 
 # Download speed label
 speed_label = tk.Label(root, text="Speed: N/A")
